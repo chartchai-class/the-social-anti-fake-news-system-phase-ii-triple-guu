@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: project2
+  datasource:
+    url: jdbc:mysql://localhost:3306/compopj2?createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: password
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update   
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+app:
+  jwt-secret: 38ed4aeea63bd8dae06e358f888e00cdaf91d8ccdef296fdcaf5b7f0aab31642efeb7f19f0adc5d3caf5759221ada8c5a4a65e97f0c5a7c4f47a50a83ac9e1ba
+  upload-dir: ./uploads
