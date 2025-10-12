@@ -9,34 +9,53 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service @RequiredArgsConstructor
 public class AuthenticationService {
   private final UserRepository users;
-  private final PasswordEncoder encoder;
+  private final UserRepository repository;
+  private final PasswordEncoder passwordEncoder;
   private final JwtService jwt;
   private final AuthenticationManager authManager;
 
-  public AuthenticationResponse register(RegisterRequest r) {
-    User u = User.builder()
-      .username(r.getUsername())
-      .email(r.getEmail())
-      .password(encoder.encode(r.getPassword()))
-      .firstname(r.getFirstname())
-      .lastname(r.getLastname())
-      .enabled(true)
-      .roles(List.of(Role.ROLE_READER))
-      .build();
+  public AuthenticationResponse register(RegisterRequest request) {
+    
 
-    u = users.save(u);
-    String access = jwt.generateToken(u);
-    String refresh = jwt.generateRefreshToken(u);
+    List<Role> assignedRoles = new ArrayList<>();
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            for (String roleName : request.getRoles()) {
+                assignedRoles.add(Role.valueOf(roleName)); 
+            }
+        } else {
+            assignedRoles.add(Role.ROLE_READER);
+        }
+    User user = User.builder()
+            .username(request.getUsername())
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .roles(assignedRoles)
+            .build();
 
-    UserDto dto = toDto(u);
-    return AuthenticationResponse.builder().accessToken(access).refreshToken(refresh).user(dto).build();
-  }
+    var savedUser = repository.save(user);
+    var jwtToken = jwt.generateToken(savedUser);
+    var refreshToken = jwt.generateRefreshToken(savedUser);
+
+    //saveUserToken(savedUser, jwtToken);
+
+    return AuthenticationResponse.builder()
+            .accessToken(jwtToken)
+            .refreshToken(refreshToken)
+            .user(toDto(savedUser))
+            .build();
+}
+    
 
   public AuthenticationResponse authenticate(AuthenticationRequest r) {
     authManager.authenticate(new UsernamePasswordAuthenticationToken(r.getUsername(), r.getPassword()));
@@ -57,7 +76,7 @@ public class AuthenticationService {
     dto.setFirstname(u.getFirstname());
     dto.setLastname(u.getLastname());
     dto.setEmail(u.getEmail());
-    dto.setRoles(u.getRoles().stream().map(Role::name)                 // or: .map(r -> r.name())
+    dto.setRoles(u.getRoles().stream().map(Role::name)                 
      .collect(Collectors.toList()) );
     return dto;
   }

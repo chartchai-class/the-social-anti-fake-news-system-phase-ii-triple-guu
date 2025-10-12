@@ -3,6 +3,7 @@ package com.example.component.project2.config;
 import com.example.component.project2.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +25,10 @@ public class SecurityConfiguration {
       .headers(h -> h.frameOptions(f -> f.disable()))
       .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/v1/auth/**", "/h2-console/**").permitAll()
+        .requestMatchers("/api/v1/auth/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/news").hasAnyRole("ADMIN","MEMBER")
+        .requestMatchers(HttpMethod.PUT, "/api/v1/news/**").hasAnyRole("ADMIN","MEMBER")
+        .requestMatchers(HttpMethod.DELETE, "/api/v1/news/**").hasRole("ADMIN")
         .anyRequest().authenticated()
       )
       .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

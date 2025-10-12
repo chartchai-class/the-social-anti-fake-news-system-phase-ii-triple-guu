@@ -6,5 +6,5 @@ public interface VoteService {
   Vote upsert(News news, User user, boolean fake);
   long countFake(News news);
   long countNotFake(News news);
-  void remove(Long voteId); // admin
+  void remove(Long voteId); 
 }

@@ -25,8 +25,8 @@ public class NewsServiceImpl implements NewsService {
     return repo.save(cur);
   }
   @Override public void softDelete(Long id) {
-    // simplest path for demo: actually delete
+    
     repo.deleteById(id);
-    // for “hidden” behavior, add a boolean `removed` on News and filter queries to exclude removed for non-admins (per brief). :contentReference[oaicite:2]{index=2}
+    
   }
 }
