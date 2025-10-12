@@ -5,7 +5,7 @@ spring:
   application:
     name: project2
   datasource:
-    url: jdbc:mysql://localhost:3306/compopj2?createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true
+    url: jdbc:mysql://localhost:3307/compopj2?createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: password
@@ -14,12 +14,16 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update   
+      ddl-auto: update
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
-app:
-  jwt-secret: 38ed4aeea63bd8dae06e358f888e00cdaf91d8ccdef296fdcaf5b7f0aab31642efeb7f19f0adc5d3caf5759221ada8c5a4a65e97f0c5a7c4f47a50a83ac9e1ba
-  upload-dir: ./uploads
+application:
+  security:
+    jwt:
+      secret-key: c16a858c368ba62d36d5a009f36a95c074ac739123c32b86925e02db55724b25c5cac7142d61eaa839f96bc7746cf264eca865b0a3e16327ae32ae0d0a7ca4d7
+      expiration: 86400000   
+      refresh-token:
+        expiration: 604800000 
