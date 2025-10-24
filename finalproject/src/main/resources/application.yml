@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: 331-backend
+  profiles:
+    active:
+      - db
+  datasource:
+    url: jdbc:mysql://localhost:3305/finalprojectdb?createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root # <-- Change to your MySQL username if different
+    password: password # <-- Change to your MySQL password if different
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+      main:
+        allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+supabase:
+  storage:
+    endpoint: https://pylmoctswmjhgjyqnjfe.storage.supabase.co/storage/v1/s3
+    endpoint_output: https://pylmoctswmjhgjyqnjfe.storage.supabase.co/storage/v1/object/public
+    bucket: finalProject
+    region: us-east-1
+    accessKey: 5930f74f301b8d2401f1ce25cee086b0
+    secretKey: d553da4fae80d93c827d1cf9087d56fc479437b6096df7fd4b02ebcbaa3158f0
+
+application:
+  security:
+    jwt:
+      secret-key: d553da4fae80d93c827d1cf9087d56fc479437b6096df7fd4b02ebcbaa3158f0
+      expiration: 86400000   # 86400000 = 1 day
+      refresh-token:
+        expiration: 604800000   # 7 days
+
