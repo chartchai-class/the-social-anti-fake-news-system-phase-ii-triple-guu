@@ -19,7 +19,8 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Build backend with Maven
+      - name: Build backend with Maven (finalproject)
+        working-directory: finalproject
         run: |
           mvn clean install -DskipTests -B
           mkdir -p target/dependency && (cd target/dependency; unzip ../*.jar)
@@ -39,8 +40,8 @@ jobs:
       - name: Build and push backend image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./finalproject
+          file: ./finalproject/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/se331-backend:latest
 
