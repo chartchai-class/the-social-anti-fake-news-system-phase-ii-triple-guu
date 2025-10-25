@@ -50,18 +50,33 @@ jobs:
           overwrite: true
 
       - name: Deploy on EC2
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST_SERVER }}
-          username: ${{ secrets.HOST_USER_NAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            set -e
-            cd ~/backend
-            mv -f docker-compose-prod.yml docker-compose.yml || true
-            echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login --username "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-            export DOCKER_HUB_USERNAME="${{ secrets.DOCKER_HUB_USERNAME }}"
-            docker compose pull
-            docker compose up -d
-            docker compose ps
+  uses: appleboy/ssh-action@v0.1.7
+  with:
+    host: ${{ secrets.HOST_SERVER }}
+    username: ${{ secrets.HOST_USER_NAME }}
+    key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+    port: 22
+    script: |
+      set -e
+      cd ~/backend
+
+      # find the compose file wherever scp put it
+      SRC=""
+      if [ -f docker-compose-prod.yml ]; then
+        SRC=docker-compose-prod.yml
+      elif [ -f finalproject/docker-compose-prod.yml ]; then
+        SRC=finalproject/docker-compose-prod.yml
+      else
+        echo "❌ docker-compose-prod.yml not found. Current tree:"
+        ls -R
+        exit 1
+      fi
+
+      mv -f "$SRC" docker-compose.yml
+
+      echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login --username "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+      export DOCKER_HUB_USERNAME="${{ secrets.DOCKER_HUB_USERNAME }}"
+
+      docker compose pull
+      docker compose up -d
+      docker compose ps
