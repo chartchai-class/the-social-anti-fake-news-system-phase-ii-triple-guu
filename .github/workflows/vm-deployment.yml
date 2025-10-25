@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./finalproject
-          file: ./Dockerfile
+          file: ./finalproject/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/se331-backend:latest
 
