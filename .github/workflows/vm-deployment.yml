@@ -1,4 +1,4 @@
-name: Deploy to AWS Docker on merge prod
+name: Build Backend & Deploy to EC2
 
 on:
   push:
@@ -6,12 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -19,17 +17,11 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Build backend with Maven (finalproject)
-        working-directory: finalproject
-        run: |
-          mvn clean install -DskipTests -B
-          mkdir -p target/dependency && (cd target/dependency; unzip ../*.jar)
+      - name: Build backend JAR
+        run: mvn -q -B -DskipTests -f ./pom.xml clean package
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -37,26 +29,26 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and push backend image
+      - name: Build & push se331-backend
         uses: docker/build-push-action@v6
         with:
-          context: ./finalproject
-          file: ./finalproject/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/se331-backend:latest
 
-      - name: Copy docker-compose to server
+      - name: Copy compose to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST_SERVER }}
           username: ${{ secrets.HOST_USER_NAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
           port: 22
-          source: "./finalproject/docker-compose-prod.yml"
+          source: "./docker-compose-prod.yml"
           target: "/home/ubuntu/backend"
           overwrite: true
 
-      - name: Deploy with docker compose on server
+      - name: Deploy on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.HOST_SERVER }}
@@ -65,9 +57,10 @@ jobs:
           port: 22
           script: |
             set -e
-            cd /home/ubuntu/backend
-            mv docker-compose-prod.yml docker-compose.yml
+            cd ~/backend
+            mv -f docker-compose-prod.yml docker-compose.yml || true
             echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login --username "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-            docker compose down
+            export DOCKER_HUB_USERNAME="${{ secrets.DOCKER_HUB_USERNAME }}"
             docker compose pull
             docker compose up -d
+            docker compose ps

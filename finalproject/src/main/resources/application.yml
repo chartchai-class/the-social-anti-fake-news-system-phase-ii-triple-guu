@@ -1,22 +1,23 @@
 spring:
   application:
     name: 331-backend
+
+  # DO NOT hardcode active profiles here; set via SPRING_PROFILES_ACTIVE env.
   profiles:
-    active:
-      - db
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
   datasource:
-    url: jdbc:mysql://localhost:3305/finalprojectdb?createDatabaseIfNotExist=true&autoReconnect=true&characterEncoding=UTF-8&allowMultiQueries=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:finalprojectdb}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root # <-- Change to your MySQL username if different
-    password: password # <-- Change to your MySQL password if different
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
-      main:
-        allow-bean-definition-overriding: true
   servlet:
     multipart:
       max-file-size: 10MB
@@ -24,18 +25,17 @@ spring:
 
 supabase:
   storage:
-    endpoint: https://pylmoctswmjhgjyqnjfe.storage.supabase.co/storage/v1/s3
-    endpoint_output: https://pylmoctswmjhgjyqnjfe.storage.supabase.co/storage/v1/object/public
-    bucket: finalProject
-    region: us-east-1
-    accessKey: 5930f74f301b8d2401f1ce25cee086b0
-    secretKey: d553da4fae80d93c827d1cf9087d56fc479437b6096df7fd4b02ebcbaa3158f0
+    endpoint: ${SUPABASE_ENDPOINT:https://example.storage.supabase.co/storage/v1/s3}
+    endpoint_output: ${SUPABASE_PUBLIC_ENDPOINT:https://example.storage.supabase.co/storage/v1/object/public}
+    bucket: ${SUPABASE_BUCKET:finalProject}
+    region: ${SUPABASE_REGION:us-east-1}
+    accessKey: ${SUPABASE_ACCESS_KEY:changeme}
+    secretKey: ${SUPABASE_SECRET_KEY:changeme}
 
 application:
   security:
     jwt:
-      secret-key: d553da4fae80d93c827d1cf9087d56fc479437b6096df7fd4b02ebcbaa3158f0
-      expiration: 86400000   # 86400000 = 1 day
+      secret-key: ${JWT_SECRET:changeme}
+      expiration: ${JWT_EXPIRATION_MS:86400000}
       refresh-token:
-        expiration: 604800000   # 7 days
-
+        expiration: ${JWT_REFRESH_EXPIRATION_MS:604800000}
