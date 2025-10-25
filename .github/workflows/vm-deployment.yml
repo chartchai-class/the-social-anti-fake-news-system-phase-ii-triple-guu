@@ -18,7 +18,8 @@ jobs:
           distribution: 'adopt'
 
       - name: Build backend JAR
-        run: mvn -q -B -DskipTests -f ./pom.xml clean package
+        working-directory: finalproject
+        run: mvn -q -B -DskipTests clean package
 
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
@@ -32,8 +33,8 @@ jobs:
       - name: Build & push se331-backend
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./finalproject
+          file: ./finalproject/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/se331-backend:latest
 
@@ -44,7 +45,7 @@ jobs:
           username: ${{ secrets.HOST_USER_NAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
           port: 22
-          source: "./docker-compose-prod.yml"
+          source: "./finalproject/docker-compose-prod.yml"
           target: "/home/ubuntu/backend"
           overwrite: true
 
