@@ -76,6 +76,6 @@ jobs:
             echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login --username "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
             export DOCKER_HUB_USERNAME="${{ secrets.DOCKER_HUB_USERNAME }}"
 
-            docker-compose pull
-            docker-compose up -d
-            docker-compose ps
+            docker compose pull
+            docker compose up -d
+            docker compose ps
