@@ -38,17 +38,17 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/se331-backend:latest
 
-      - name: Verify SSH to EC2
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST_SERVER }}
-          username: ${{ secrets.HOST_USER_NAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            echo "✅ Connected OK"
-            uname -a
-            mkdir -p ~/backend
+      # - name: Verify SSH to EC2
+      #   uses: appleboy/ssh-action@v0.1.7
+      #   with:
+      #     host: ${{ secrets.HOST_SERVER }}
+      #     username: ${{ secrets.HOST_USER_NAME }}
+      #     key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+      #     port: 22
+      #     script: |
+      #       echo "✅ Connected OK"
+      #       uname -a
+      #       mkdir -p ~/backend
 
       - name: Copy compose to server
         uses: appleboy/scp-action@v0.1.7
