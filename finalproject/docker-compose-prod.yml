@@ -21,33 +21,41 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "9090:80"
-    depends_on: [db]
+    depends_on: 
+      - db
 
   backend:
     image: ${DOCKER_HUB_USERNAME}/se331-backend:latest
     restart: unless-stopped
-    depends_on: [db]
+    depends_on:
+      db:
+        condition: service_healthy  
     ports:
       - "8999:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/finalprojectdb  
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}  
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}  
+      SPRING_PROFILES_ACTIVE: prod
       JWT_SECRET: ${JWT_SECRET}
-      SUPABASE_ENDPOINT: ${SUPABASE_ENDPOINT}
-      SUPABASE_PUBLIC_ENDPOINT: ${SUPABASE_PUBLIC_ENDPOINT}
-      SUPABASE_BUCKET: ${SUPABASE_BUCKET}
-      SUPABASE_REGION: ${SUPABASE_REGION}
-      SUPABASE_ACCESS_KEY: ${SUPABASE_ACCESS_KEY}
-      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY}
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
   frontend:
     image: ${DOCKER_HUB_USERNAME}/se331-frontend:latest
     restart: unless-stopped
-    depends_on: [backend]
+    depends_on:
+      backend:
+        condition: service_healthy  
     ports:
       - "8001:80"
+    environment:
+      VITE_BACKEND_BASE: "http://backend:8999/api/v1"  
 
 volumes:
   dbdata:
