@@ -12,6 +12,12 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -21,7 +27,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "9090:80"
-    depends_on: 
+    depends_on:
       - db
 
   backend:
@@ -38,7 +44,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}  
       SPRING_PROFILES_ACTIVE: prod
       JWT_SECRET: ${JWT_SECRET}
-      
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -55,7 +60,7 @@ services:
     ports:
       - "8001:80"
     environment:
-      VITE_BACKEND_BASE: "http://backend:8999/api/v1"  
+      VITE_BACKEND_BASE: "http://backend:8999/api/v1"
 
 volumes:
   dbdata:
