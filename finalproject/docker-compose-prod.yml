@@ -12,12 +12,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - dbdata:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=${MYSQL_ROOT_PASSWORD}"]
-      interval: 30s
-      retries: 5
-      start_period: 10s
-      timeout: 10s
+    # Removed healthcheck
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -34,29 +29,22 @@ services:
     image: ${DOCKER_HUB_USERNAME}/se331-backend:latest
     restart: unless-stopped
     depends_on:
-      db:
-        condition: service_healthy  
+      - db
     ports:
       - "8999:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/finalprojectdb  
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}  
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}  
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/finalprojectdb
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       SPRING_PROFILES_ACTIVE: prod
       JWT_SECRET: ${JWT_SECRET}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "-H", "Authorization: Bearer ${JWT_SECRET}", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
+    # Removed healthcheck
 
   frontend:
     image: ${DOCKER_HUB_USERNAME}/se331-frontend:latest
     restart: unless-stopped
     depends_on:
-      backend:
-        condition: service_healthy  
+      - backend
     ports:
       - "8001:80"
     environment:
