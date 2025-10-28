@@ -45,7 +45,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       JWT_SECRET: ${JWT_SECRET}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "-H", "Authorization: Bearer ${JWT_SECRET}", "http://localhost:8080/actuator/health"]
       interval: 30s
       retries: 3
       start_period: 10s
