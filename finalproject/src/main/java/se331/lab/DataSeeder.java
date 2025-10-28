@@ -14,10 +14,39 @@ public class DataSeeder implements CommandLineRunner {
     NewsRepository newsRepository;
     @Autowired
     CommentRepository commentRepository;
+        @Autowired
+        se331.lab.repository.UserRepository userRepository;
 
     @Override
     public void run(String... args) {
         if (newsRepository.count() == 0) { // Only seed if empty
+            // Add mock users
+            if (userRepository.count() == 0) {
+                userRepository.save(se331.lab.entity.UserEntity.builder()
+                        .username("reader1")
+                        .email("reader1@example.com")
+                        .password("password1")
+                        .name("Reader")
+                        .surname("One")
+                        .role(se331.lab.entity.RoleType.READER)
+                        .build());
+                userRepository.save(se331.lab.entity.UserEntity.builder()
+                        .username("member1")
+                        .email("member1@example.com")
+                        .password("password2")
+                        .name("Member")
+                        .surname("One")
+                        .role(se331.lab.entity.RoleType.MEMBER)
+                        .build());
+                userRepository.save(se331.lab.entity.UserEntity.builder()
+                        .username("admin1")
+                        .email("admin1@example.com")
+                        .password("password3")
+                        .name("Admin")
+                        .surname("One")
+                        .role(se331.lab.entity.RoleType.ADMIN)
+                        .build());
+            }
             for (int i = 1; i <= 10; i++) {
                 News news = News.builder()
                     .topic("Sample News " + i)
