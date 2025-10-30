@@ -58,12 +58,11 @@ public class NewsController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('MEMBER')")
+    @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
     public ResponseEntity<?> add(@RequestBody News news) {
         News created = newsService.addNews(news);
         return ResponseEntity.ok(mapper.newsToDto(created));
     }
-
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

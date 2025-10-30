@@ -27,8 +27,8 @@ supabase:
   storage:
     endpoint: ${SUPABASE_ENDPOINT:https://example.storage.supabase.co/storage/v1/s3}
     endpoint_output: ${SUPABASE_PUBLIC_ENDPOINT:https://example.storage.supabase.co/storage/v1/object/public}
-    bucket: ${SUPABASE_BUCKET:finalProject}
-    region: ${SUPABASE_REGION:us-east-1}
+    bucket: ${SUPABASE_BUCKET:profileimage}
+    region: ${SUPABASE_REGION:ap-southeast-1}
     accessKey: ${SUPABASE_ACCESS_KEY:changeme}
     secretKey: ${SUPABASE_SECRET_KEY:changeme}
 
