@@ -47,13 +47,14 @@ public class DataSeeder implements CommandLineRunner {
                         .role(se331.lab.entity.RoleType.ADMIN)
                         .build());
             }
-            for (int i = 1; i <= 10; i++) {
+            for (int i = 1; i <= 15; i++) {
                 News news = News.builder()
                     .topic("Sample News " + i)
                     .shortDetail("Short detail for news " + i)
                     .fullDetail("This is a sample news full detail for item " + i)
                     .reporterName("Reporter " + i)
                     .dateTime(java.time.LocalDateTime.now())
+                    .imageUrl("https://picsum.photos/seed/art/600/300")
                     .status(se331.lab.entity.NewsStatus.UNKNOWN)
                     .build();
                 newsRepository.save(news);
