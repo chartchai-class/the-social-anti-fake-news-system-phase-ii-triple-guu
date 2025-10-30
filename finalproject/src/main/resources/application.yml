@@ -25,17 +25,17 @@ spring:
 
 supabase:
   storage:
-    endpoint: ${SUPABASE_ENDPOINT:https://example.storage.supabase.co/storage/v1/s3}
-    endpoint_output: ${SUPABASE_PUBLIC_ENDPOINT:https://example.storage.supabase.co/storage/v1/object/public}
+    endpoint: ${SUPABASE_ENDPOINT:https://pbkwalubvpobtbnvhxvg.storage.supabase.co/storage/v1/s3}
+    endpoint_output: ${SUPABASE_PUBLIC_ENDPOINT:https://pbkwalubvpobtbnvhxvg.storage.supabase.co/storage/v1/object/public}
     bucket: ${SUPABASE_BUCKET:profileimage}
     region: ${SUPABASE_REGION:ap-southeast-1}
-    accessKey: ${SUPABASE_ACCESS_KEY:changeme}
-    secretKey: ${SUPABASE_SECRET_KEY:changeme}
+    accessKey: ${SUPABASE_ACCESS_KEY:154beac867bb64891649eb0d36a5fe18}
+    secretKey: ${SUPABASE_SECRET_KEY:242956fd5ad709d7488f5dea4dff53ba408a6df2e851157d48fe5b460c47d614}
 
 application:
   security:
     jwt:
-      secret-key: ${JWT_SECRET:changeme}
+      secret-key: ${JWT_SECRET:d553da4fae80d93c827d1cf9087d56fc479437b6096df7fd4b02ebcbaa3158f0}
       expiration: ${JWT_EXPIRATION_MS:86400000}
       refresh-token:
         expiration: ${JWT_REFRESH_EXPIRATION_MS:604800000}
